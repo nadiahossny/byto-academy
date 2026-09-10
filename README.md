@@ -49,7 +49,7 @@ npm run start
 
 ## 🌐 Deployment
 
-The easiest way to deploy this Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js. Simply push this repository to GitHub and import it into Vercel for zero-config, automatic deployments.
+Open [deployed version](https://byto-academy.vercel.app/)
 
 ## 👨‍💻 Developer Notes & Case Study
 
@@ -60,4 +60,4 @@ This project serves as a robust frontend case study demonstrating:
 - Resolving React hydration mismatches and client/server rendering synchronization.
 
 ---
-*Built with ❤️ for the future of online education.*
+*Built with 🤍 for the future of online education.*
