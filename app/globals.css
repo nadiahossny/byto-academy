@@ -1,13 +1,14 @@
 :root {
-  --primary-color: #1A1C29;
-  --accent-color: #FF9F1C;
-  --bg-color: #F4F5F7;
-  --text-main: #333333;
-  --text-light: #888888;
+  --primary-color: #12263A;
+  --accent-color: #1D8FE1;
+  --accent-soft: #D6E9FC;
+  --bg-color: #F6FAFF;
+  --text-main: #12263A;
+  --text-light: #5A718A;
   --white: #FFFFFF;
-  --radius: 8px;
-  --shadow: 0 1px 4px rgba(0,0,0,0.08);
-  --transition: all 0.2s ease-in-out;
+  --radius: 16px;
+  --shadow: 0 10px 30px -8px rgba(15, 41, 66, 0.06), 0 2px 8px -2px rgba(15, 41, 66, 0.03);
+  --transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 * {
@@ -30,13 +31,13 @@ a {
 
 .responsive-grid {
   display: grid;
-  grid-template-columns: 2fr 1fr;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
   gap: 30px;
 }
 
 .responsive-grid-reverse {
   display: grid;
-  grid-template-columns: 1fr 2fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
   gap: 30px;
 }
 

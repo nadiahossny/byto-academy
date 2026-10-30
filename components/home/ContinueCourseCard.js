@@ -3,24 +3,27 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { courseModules } from '../../lib/mockData';
-import styles from '../../app/page.module.css';
+import { RotateCw } from 'lucide-react';
+import { useUser } from '../../app/(dashboard)/UserContext';
+import styles from '../../app/(dashboard)/dashboard/page.module.css';
 
 export default function ContinueCourseCard() {
   const router = useRouter();
   const [isFlipped, setIsFlipped] = useState(false);
-  
-  // Pull tasks from the learning module data
-  const [tasks, setTasks] = useState(
-    courseModules.slice(0, 3).map(mod => ({
-      id: mod.id,
-      text: mod.title,
-      done: mod.status === 'completed'
-    }))
-  );
+  const { tasks, toggleTask } = useUser();
 
-  const handleFlip = (e) => {
+  const completedCount = tasks.filter((t) => t.done).length;
+  const progressPercent = tasks.length > 0 ? Math.round((completedCount / tasks.length) * 100) : 65;
+
+  const handleFlip = () => {
     setIsFlipped(!isFlipped);
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      setIsFlipped(!isFlipped);
+    }
   };
 
   const handleContinue = (e) => {
@@ -28,72 +31,87 @@ export default function ContinueCourseCard() {
     router.push('/learn/1');
   };
 
-  const toggleTask = (e, id) => {
+  const handleTaskClick = (e, id) => {
     e.stopPropagation();
-    setTasks(tasks.map(task => 
-      task.id === id ? { ...task, done: !task.done } : task
-    ));
+    toggleTask(id);
   };
 
   return (
-    <div 
-      className={`${styles.flipCard} ${isFlipped ? styles.flipped : ''}`} 
+    <div
+      role="button"
+      tabIndex={0}
+      aria-label="Continue Course card. Press Enter or click to flip between course progress and recent tasks."
+      className={`${styles.flipCard} ${isFlipped ? styles.flipped : ''}`}
       onClick={handleFlip}
+      onKeyDown={handleKeyDown}
     >
       <div className={styles.flipCardInner}>
-        
         {/* Front Side */}
         <div className={styles.flipCardFront}>
-          <h3 className={styles.courseCardTitle}>Continue Course</h3>
-          
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+            <h3 className={styles.courseCardTitle} style={{ marginBottom: 0 }}>Continue Course</h3>
+            <span style={{ fontSize: '0.75rem', color: 'var(--text-light)', display: 'flex', alignItems: 'center', gap: '4px', fontWeight: 600 }}>
+              <RotateCw size={13} /> Flip for Tasks
+            </span>
+          </div>
+
           <div className={styles.courseImgWrapper}>
-            <Image 
-              src="/Aprog.png" 
-              alt="Programming" 
-              width={100} 
-              height={100} 
-              style={{ objectFit: 'contain' }} 
+            <Image
+              src="/mascot-scholar.png"
+              alt="Byto Scholar Mascot — Frontend Web Developer Path"
+              width={110}
+              height={110}
+              style={{ objectFit: 'contain' }}
             />
           </div>
-          
-          <h4 className={styles.courseName}>Advanced React Patterns</h4>
-          <p className={styles.courseModule}>Module 4: Custom Hooks in Depth</p>
-          
+
+          <h4 className={styles.courseName}>Frontend Web Developer Path</h4>
+          <p className={styles.courseModule}>Module 2: JavaScript Essentials</p>
+
           <div className={styles.progressBarContainer}>
-            <div className={styles.progressBarFill} style={{ width: '65%' }}></div>
+            <div
+              className={styles.progressBarFill}
+              style={{ width: `${progressPercent}%`, transition: 'width 0.4s ease' }}
+            />
           </div>
-          
-          <p className={styles.progressText}>65% Complete</p>
+
+          <p className={styles.progressText}>{progressPercent}% Complete</p>
         </div>
 
         {/* Back Side (What's been learnt) */}
         <div className={styles.flipCardBack}>
-          <h3>Recent Tasks</h3>
-          
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+            <h3 style={{ marginBottom: 0 }}>Recent Tasks</h3>
+            <span style={{ fontSize: '0.75rem', color: 'var(--text-light)', fontWeight: 600 }}>
+              {completedCount}/{tasks.length} Done
+            </span>
+          </div>
+
           <ul className={styles.learntList}>
-            {tasks.map(task => (
-              <li 
-                key={task.id} 
-                onClick={(e) => toggleTask(e, task.id)}
+            {tasks.map((task) => (
+              <li
+                key={task.id}
+                onClick={(e) => handleTaskClick(e, task.id)}
               >
                 <span className={styles.checkIcon}>
                   {task.done ? '✓' : '○'}
                 </span>
-                <span style={{ 
-                  textDecoration: task.done ? 'line-through' : 'none', 
-                  color: task.done ? '#999' : 'var(--text-main)' 
-                }}>
+                <span
+                  style={{
+                    textDecoration: task.done ? 'line-through' : 'none',
+                    color: task.done ? '#999' : 'var(--text-main)',
+                  }}
+                >
                   {task.text}
                 </span>
               </li>
             ))}
           </ul>
 
-          <button onClick={handleContinue} className={styles.continueBtnBack}>
+          <button type="button" onClick={handleContinue} className={styles.continueBtnBack}>
             Resume Learning
           </button>
         </div>
-
       </div>
     </div>
   );

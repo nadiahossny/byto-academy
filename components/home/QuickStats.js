@@ -1,36 +1,38 @@
 'use client';
 
-import { useState } from 'react';
-import { Flame, Clock, Award, CheckCircle } from 'lucide-react';
+import { Flame, Clock, Award } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import styles from '../../app/page.module.css';
+import { useUser } from '../../app/(dashboard)/UserContext';
+import styles from '../../app/(dashboard)/dashboard/page.module.css';
 
 export default function QuickStats() {
   const router = useRouter();
-  const [streak, setStreak] = useState(12);
-  const [claimed, setClaimed] = useState(false);
-
-  const handleClaim = (e) => {
-    e.stopPropagation();
-    setStreak(streak + 1);
-    setClaimed(true);
-  };
+  const { currentStreak, hoursLearned, badgesCount } = useUser();
 
   const stats = [
-    { id: 1, title: 'Current Streak', value: `${streak} Days`, icon: Flame },
-    { id: 2, title: 'Hours Learned', value: '45.5h', icon: Clock },
-    { id: 3, title: 'Milestones Unlocked', value: '12 Badges', icon: Award },
+    { id: 1, title: 'Current Streak', value: `${currentStreak} Days`, icon: Flame },
+    { id: 2, title: 'Hours Learned', value: `${hoursLearned}h`, icon: Clock },
+    { id: 3, title: 'Milestones Unlocked', value: `${badgesCount} Badges`, icon: Award },
   ];
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
       <div className={styles.statsGrid}>
         {stats.map((stat) => (
-          <div 
-            key={stat.id} 
+          <div
+            key={stat.id}
+            role="button"
+            tabIndex={0}
+            aria-label={`View details for ${stat.title}: ${stat.value}`}
             className={styles.statItem}
             style={{ cursor: 'pointer' }}
             onClick={() => router.push('/stats')}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                router.push('/stats');
+              }
+            }}
           >
             <div className={styles.statIconWrap}>
               <stat.icon color="var(--accent-color)" size={24} />
@@ -42,8 +44,6 @@ export default function QuickStats() {
           </div>
         ))}
       </div>
-      
-      {/* Interactive element removed as per user request */}
     </div>
   );
 }
